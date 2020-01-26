@@ -1,0 +1,19 @@
+{
+  "name": "measurement-protocol",
+  "version": "0.0.0",
+  "repository": "amio/measurement-protocol",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -d",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "ky": "^0.16.2",
+    "ky-universal": "^0.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^13.5.0",
+    "typescript": "^3.7.5"
+  }
+}
