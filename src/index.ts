@@ -92,6 +92,8 @@ class Measure {
 
   send (this: Measure): void { send(this) }
 
+  toString (this: Measure): string { return buildPayload(this.config) }
+
   pageview (this: Measure, url: string | { dh: string, dp: string }): Measure {
     const config: MeasurementConfig = { t: 'pageview' }
     if (typeof url === 'string') {
