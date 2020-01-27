@@ -1,9 +1,22 @@
-import ky from 'ky-universal'
+import https from 'https'
+import uuid from 'uuid/v4'
 
-type HitType = 'pageview' | 'screenview' | 'event' | 'transaction' | 'item' | 'social' | 'exception' | 'timing'
-type Boolean = '0' | '1'
+import { IncomingMessage } from 'http'
 
 // https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
+
+type Boolean = '0' | '1'
+
+type HitType =
+  | 'pageview'
+  | 'screenview'
+  | 'transaction'
+  | 'event'
+  | 'item'
+  | 'social'
+  | 'exception'
+  | 'timing'
+
 interface MeasurementParams {
   /** Protocol Version */
   v: '1';
@@ -133,7 +146,7 @@ function buildPayload (params: Partial<MeasurementParams>): string {
 
   // Create a random User ID if no cid & uid presented
   if (formated.uid === undefined && formated.cid === undefined) {
-    formated.uid = Date.now().toString()
+    formated.cid = uuid()
   }
 
   return new URLSearchParams(formated).toString()
@@ -141,10 +154,16 @@ function buildPayload (params: Partial<MeasurementParams>): string {
 
 export function send (measurement: Measure) {
   const body = buildPayload(measurement.config)
-  ky.post('https://www.google-analytics.com/collect', { body }).catch(console.error)
+  post('https://www.google-analytics.com/collect', body)
 }
 
 export function batchSend (measurements: Measure[]) {
   const body = measurements.map(m => buildPayload(m.config)).join('\n')
-  ky.post('https://www.google-analytics.com/batch', { body }).catch(console.error)
+  post('https://www.google-analytics.com/batch', body)
+}
+
+function post (url: string, body: string, callback?: (response: IncomingMessage) => void) {
+  const req = https.request(url, { method: 'POST' }, callback)
+  req.write(body)
+  req.end()
 }
