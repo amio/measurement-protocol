@@ -3,8 +3,6 @@ import uuid from 'uuid/v4'
 
 import { IncomingMessage } from 'http'
 
-// https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
-
 type Boolean = '0' | '1'
 
 type HitType =
@@ -167,3 +165,5 @@ function post (url: string, body: string, callback?: (response: IncomingMessage)
   req.write(body)
   req.end()
 }
+
+// https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
