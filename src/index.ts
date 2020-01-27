@@ -1,7 +1,4 @@
-import https from 'https'
 import uuid from 'uuid/v4'
-
-import { IncomingMessage } from 'http'
 
 type Boolean = '0' | '1'
 
@@ -150,20 +147,30 @@ function buildPayload (params: Partial<MeasurementParams>): string {
   return new URLSearchParams(formated).toString()
 }
 
-export function send (measurement: Measure) {
+export async function send (measurement: Measure): Promise<Response> {
   const body = buildPayload(measurement.config)
-  post('https://www.google-analytics.com/collect', body)
+  return post('https://www.google-analytics.com/collect', body)
 }
 
-export function batchSend (measurements: Measure[]) {
+export async function batchSend (measurements: Measure[]): Promise<Response> {
   const body = measurements.map(m => buildPayload(m.config)).join('\n')
-  post('https://www.google-analytics.com/batch', body)
+  return post('https://www.google-analytics.com/batch', body)
 }
 
-function post (url: string, body: string, callback?: (response: IncomingMessage) => void) {
-  const req = https.request(url, { method: 'POST' }, callback)
-  req.write(body)
-  req.end()
+async function post (url: string, body: string): Promise<Response> {
+  if (typeof fetch === 'function') {
+    // post in browser
+    return fetch(url, { method: 'POST', body })
+  } else {
+    // post in node
+    return new Promise((resolve, reject) => {
+      const https = require('https')
+      const req = https.request(url, { method: 'POST' }, resolve)
+      req.on('error', reject)
+      req.write(body)
+      req.end()
+    })
+  }
 }
 
 // https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
