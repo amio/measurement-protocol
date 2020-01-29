@@ -2,10 +2,9 @@
   "compilerOptions": {
     "strict": true,
     "noImplicitAny": false,
-    "allowJs": true,
     "skipLibCheck": true,
     "jsx": "preserve",
-    "target": "es2018",
+    "target": "es2017",
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
