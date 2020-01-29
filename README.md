@@ -60,7 +60,7 @@ measure(trackId).set({ t: 'pageview', dh: 'example.com', dp: '/docs' }).send()
 
 All methods return a new Measurement instance, they are chainable. Except `send()` and `batchSend()`.
 
-#### `measure(trackId: string, params?: Record<string, string>)`
+### `measure(trackId: string, params?: Record<string, string>)`
 
 Create a measurement instance.
 
@@ -72,7 +72,7 @@ const tracker = measure('UA-XXXXX-XX')
 const tracker = measure('UA-XXXXX-XX', { uid: 'XXXX.XXXX' })
 ```
 
-##### `measurement.set(Record<string, string>)`
+#### `measurement.set(Record<string, string>)`
 
 Set measurement parameter, returns a new measurement instance.
 
