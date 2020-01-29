@@ -23,6 +23,8 @@ measure('UA-XXXXX-XX')
   .send()
 ```
 
+### Core
+
 To send measurement to Google Analytics, all you need is:
 
 ```js
@@ -33,6 +35,8 @@ measure(trackId)  // create a measurement instance
 
 For all available parameters, checkout [Measurement Protocol Parameter Reference](https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters)
 
+### Helpers
+
 Built on top of that, there's some human-friendly helpers:
 
 ```js
@@ -42,20 +46,22 @@ measure(trackId).transaction(...params).send()  // not implemented yet
 measure(trackId).social(...params).send()       // not implemented yet
 measure(trackId).item(...params).send()         // not implemented yet
 measure(trackId).event(...params).send()
-measure(trackId).timing(...params).send()       // not implemented yet
-measure(trackId).exception(...params).send()    // not implemented yet
+measure(trackId).timing(...params).send()
+measure(trackId).exception(...params).send()
 ```
 
 ```js
 // this human fiendly manner
 measure(trackId).pageview({ host: 'example.com', path: '/docs' }).send()
 // is equal to
-measure(trackId).set({ dh: 'example.com', dp: '/docs' }).send()
+measure(trackId).set({ t: 'pageview', dh: 'example.com', dp: '/docs' }).send()
 ```
 
 ## API
 
-### `measure(trackId: string, params?: Record<string, string>) => Measurement`
+All methods return a new Measurement instance, they are chainable. Except `send()` and `batchSend()`.
+
+#### `measure(trackId: string, params?: Record<string, string>)`
 
 Create a measurement instance.
 
@@ -67,7 +73,7 @@ const tracker = measure('UA-XXXXX-XX')
 const tracker = measure('UA-XXXXX-XX', { uid: 'XXXX.XXXX' })
 ```
 
-#### `measurement.set(Record<string, string>)`
+##### `measurement.set(Record<string, string>)`
 
 Set measurement parameter, returns a new measurement instance.
 
@@ -78,7 +84,7 @@ const trackPageview = tracker.set({ t: 'pageview' })
 const trackEvent = tracker.set({ t: 'event' })
 ```
 
-#### `measurement.send()`
+#### `measurement.send() => Promise<Response>`
 
 Send measurement to Google Analytics (`https://www.google-analytics.com/collect`)
 

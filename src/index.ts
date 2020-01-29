@@ -55,6 +55,18 @@ interface MeasurementParams {
   /** Event Value */
   ev?: number;
 
+  /** User timing category */
+  utc?: string;
+
+  /** User timing variable name */
+  utv?: string;
+
+  /** User timing time */
+  utt?: number;
+
+  /** User timing label */
+  utl?: string;
+
   /** Exception Description */
   exd?: string;
 
@@ -118,6 +130,16 @@ class Measure {
       ea: action,
       el: label,
       ev: value
+    })
+  }
+
+  timing (this: Measure, category: string, name: string, value: number, label?: string): Measure {
+    return this.set({
+      t: 'timing',
+      utc: category,
+      utv: name,
+      utt: value,
+      utl: label
     })
   }
 
