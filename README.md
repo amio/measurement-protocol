@@ -4,7 +4,9 @@
 [![Bundle size][bundlephobia-src]][bundlephobia-href]
 [![License][license-src]][license-href]
 
-A minimal universal module for Google's [Universal Analytics][ua-href] tracking via the [Measurement Protocol][mp-href].
+A minimal module for Google's [Universal Analytics][ua-href] tracking via the [Measurement Protocol][mp-href], in human friendly manner.
+
+Works in node.js and browser.
 
 ## Usage
 
@@ -15,8 +17,113 @@ npm install measurement-protocol
 ```typescript
 const { measure } = require('measurement-protocol')
 
-// Initialization expects at least your Google Analytics account ID:
-measure('UA-XXXXX-XX').pageview('/').send()
+// Initialize with Google Analytics Tracking ID / Web Property ID:
+measure('UA-XXXXX-XX')
+  .pageview('https://example.com/docs')
+  .send()
+```
+
+To send measurement to Google Analytics, all you need is:
+
+```js
+measure(trackId)  // create a measurement instance
+  .set(params)    // setup parameters
+  .send()         // send it
+```
+
+For all available parameters, checkout [Measurement Protocol Parameter Reference](https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters)
+
+Built on top of that, there's some human-friendly helpers:
+
+```js
+measure(trackId).pageview(...params).send()
+measure(trackId).screenview(...params).send()   // not implemented yet
+measure(trackId).transaction(...params).send()  // not implemented yet
+measure(trackId).social(...params).send()       // not implemented yet
+measure(trackId).item(...params).send()         // not implemented yet
+measure(trackId).event(...params).send()
+measure(trackId).timing(...params).send()       // not implemented yet
+measure(trackId).exception(...params).send()    // not implemented yet
+```
+
+```js
+// this human fiendly manner
+measure(trackId).pageview({ host: 'example.com', path: '/docs' }).send()
+// is equal to
+measure(trackId).set({ dh: 'example.com', dp: '/docs' }).send()
+```
+
+## API
+
+### `measure(trackId: string, params?: Record<string, string>) => Measurement`
+
+Create a measurement instance.
+
+```js
+// Create a measurement (tracker)
+const tracker = measure('UA-XXXXX-XX')
+
+// Create a measurement with params
+const tracker = measure('UA-XXXXX-XX', { uid: 'XXXX.XXXX' })
+```
+
+#### `measurement.set(Record<string, string>)`
+
+Set measurement parameter, returns a new measurement instance.
+
+```js
+const tracker = measure('UA-XXXXX-XX')
+
+const trackPageview = tracker.set({ t: 'pageview' })
+const trackEvent = tracker.set({ t: 'event' })
+```
+
+#### `measurement.send()`
+
+Send measurement to Google Analytics (`https://www.google-analytics.com/collect`)
+
+#### `measurement.pageview(url: string | { host: string, path: string })`
+
+Page view measurement allows you to measure the number of views you had for a particular page on your website. Pages often correspond to an entire HTML document, but they can also represent dynamically loaded content; this is known as "virtual pageviews".
+
+```js
+measure('UA-XXXXX-XX').pageview('https://example.com/about').send()
+```
+```js
+measure('UA-XXXXX-XX').pageview({ host: 'example.com', path: '/about' }).send()
+```
+
+#### `measurement.event(category: string, action: string, label?: string, value?: number)`
+
+Events are user interactions with content that can be measured independently from a web page or a screen load. Downloads, mobile ad clicks, gadgets, Flash elements, AJAX embedded elements, and video plays are all examples of actions you might want to measure as Events.
+
+```js
+measure('UA-XXXXX-XX').event('error', '404').send()
+```
+```js
+measure('UA-XXXXX-XX').event('error', '404', '/not-found').send()
+```
+
+#### `measurement.timing(category: string, name: string, value: number, label?: string)`
+
+User timings allow developers to measure periods of time. This is particularly useful for developers to measure the latency, or time spent, making AJAX requests and loading web resources.
+
+```js
+measure('UA-XXXXX-XX').timing('deps', 'load', 3200).send()
+```
+```js
+measure('UA-XXXXX-XX').timing('deps', 'load', 3200, 'css').send()
+```
+
+#### `measurement.exception(description: string, fatal?: boolean = true)`
+
+Exception tracking allows you to measure the number and type of crashes or errors that occur on your property.
+
+```js
+measure('UA-XXXXX-XX').exception(error.message).send()
+```
+```js
+measure('UA-XXXXX-XX').exception(error.message, false).send()
 ```
 
 [npm-src]: https://badgen.net/npm/v/measurement-protocol

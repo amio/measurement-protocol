@@ -100,13 +100,13 @@ class Measure {
 
   toString (this: Measure): string { return buildPayload(this.params) }
 
-  pageview (this: Measure, url: string | { dh: string, dp: string }): Measure {
+  pageview (this: Measure, url: string | { host: string, path: string }): Measure {
     const params: MeasurementParams = { t: 'pageview' }
     if (typeof url === 'string') {
       params.dl = url
     } else {
-      params.dh = url.dh
-      params.dp = url.dp
+      params.dh = url.host
+      params.dp = url.path
     }
     return this.set(params)
   }
@@ -121,11 +121,11 @@ class Measure {
     })
   }
 
-  exception (this: Measure, description: string, fatal: Boolean = '1'): Measure {
+  exception (this: Measure, description: string, fatal: boolean = true): Measure {
     return this.set({
       t: 'exception',
       exd: description,
-      exf: fatal
+      exf: fatal ? '1' : '0'
     })
   }
 }
