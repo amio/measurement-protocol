@@ -14,10 +14,10 @@ type HitType =
 
 interface MeasurementParams {
   /** Protocol Version */
-  v: '1';
+  v?: '1';
 
   /** Tracking ID / Web Property ID */
-  tid: string;
+  tid?: string;
 
   /** Client ID */
   cid?: string;
@@ -62,55 +62,53 @@ interface MeasurementParams {
   exf?: Boolean;
 }
 
-type MeasurementConfig = Partial<MeasurementParams>
-
 export function measure (
   tid: MeasurementParams['tid'],
-  config: MeasurementConfig = {},
+  params: Partial<MeasurementParams> = {},
 ): Measure {
-  return new Measure({ tid, ...config })
+  return new Measure({ tid, ...params })
 }
 
 class Measure {
-  config: MeasurementConfig;
+  params: MeasurementParams;
 
-  constructor (config: MeasurementConfig = {}) {
-    this.config = { v: '1', ...config }
+  constructor (params: MeasurementParams = {}) {
+    this.params = { v: '1', ...params }
   }
 
-  set (this: Measure, config: MeasurementConfig): Measure {
-    return new Measure({ ...this.config, ...config })
+  set (this: Measure, params: MeasurementParams): Measure {
+    return new Measure({ ...this.params, ...params })
   }
 
   setCustomDimension (values: string[]): Measure {
-    const config = {}
+    const params = {}
     values.forEach((val, idx) => {
-      config[`cd${idx}`] = val
+      params[`cd${idx}`] = val
     })
-    return this.set(config)
+    return this.set(params)
   }
 
   setCustomMetrics (values: number[]): Measure {
-    const config = {}
+    const params = {}
     values.forEach((val, idx) => {
-      config[`cm${idx}`] = val
+      params[`cm${idx}`] = val
     })
-    return this.set(config)
+    return this.set(params)
   }
 
   send (this: Measure): void { send(this) }
 
-  toString (this: Measure): string { return buildPayload(this.config) }
+  toString (this: Measure): string { return buildPayload(this.params) }
 
   pageview (this: Measure, url: string | { dh: string, dp: string }): Measure {
-    const config: MeasurementConfig = { t: 'pageview' }
+    const params: MeasurementParams = { t: 'pageview' }
     if (typeof url === 'string') {
-      config.dl = url
+      params.dl = url
     } else {
-      config.dh = url.dh
-      config.dp = url.dp
+      params.dh = url.dh
+      params.dp = url.dp
     }
-    return this.set(config)
+    return this.set(params)
   }
 
   event (this: Measure, category: string, action: string, label?: string, value?: number): Measure {
@@ -148,12 +146,12 @@ function buildPayload (params: Partial<MeasurementParams>): string {
 }
 
 export async function send (measurement: Measure): Promise<Response> {
-  const body = buildPayload(measurement.config)
+  const body = buildPayload(measurement.params)
   return post('https://www.google-analytics.com/collect', body)
 }
 
 export async function batchSend (measurements: Measure[]): Promise<Response> {
-  const body = measurements.map(m => buildPayload(m.config)).join('\n')
+  const body = measurements.map(m => buildPayload(m.params)).join('\n')
   return post('https://www.google-analytics.com/batch', body)
 }
 
