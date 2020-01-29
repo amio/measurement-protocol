@@ -24,7 +24,7 @@ measure('UA-XXXXX-XX')
 
 ### Core
 
-To send measurement to Google Analytics, all you need is:
+To send measurement data to Google Analytics, all you need is:
 
 ```js
 measure(trackId)  // create a measurement instance
@@ -85,7 +85,7 @@ const trackEvent = tracker.set({ t: 'event' })
 
 #### `measurement.send() => Promise<Response>`
 
-Send measurement to Google Analytics (`https://www.google-analytics.com/collect`)
+Send measurement data to Google Analytics via Measurement Protocol.
 
 #### `measurement.pageview(url: string | { host: string, path: string })`
 
