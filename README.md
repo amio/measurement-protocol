@@ -17,12 +17,10 @@ npm install measurement-protocol
 const { measure } = require('measurement-protocol')
 
 // Initialize with Google Analytics Tracking ID / Web Property ID:
-measure('UA-XXXXX-XX')
-  .pageview('https://example.com/docs')
-  .send()
+measure('UA-XXXXX-XX').pageview('/docs').send()
 ```
 
-### Core
+### Core Functions
 
 To send measurement data to Google Analytics, all you need is:
 
@@ -31,6 +29,9 @@ measure(trackId)  // create a measurement instance
   .set(params)    // setup parameters
   .send()         // send it
 ```
+
+- `trackId` Google Analytics Tracking ID / Web Property ID (`'UA-XXXXX-XX'`)
+- `params` Parameters for Measurement Protocol (`{ t: 'pageview', dh: 'example.com', dp: '/docs' }`)
 
 For all available parameters, checkout [Measurement Protocol Parameter Reference](https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters)
 
@@ -50,15 +51,15 @@ measure(trackId).exception(...params).send()
 ```
 
 ```js
-// this human fiendly manner
+// a human fiendly manner
 measure(trackId).pageview({ host: 'example.com', path: '/docs' }).send()
-// is equal to
+// equals to
 measure(trackId).set({ t: 'pageview', dh: 'example.com', dp: '/docs' }).send()
 ```
 
 ## API
 
-All methods return a new Measurement instance, they are chainable. Except `send()` and `batchSend()`.
+> All measurement methods are chainable (returns a new Measurement instance), except `.send()`.
 
 ### `measure(trackId: string, params?: Record<string, string>)`
 
@@ -67,12 +68,13 @@ Create a measurement instance.
 ```js
 // Create a measurement (tracker)
 const tracker = measure('UA-XXXXX-XX')
-
+```
+```js
 // Create a measurement with params
 const tracker = measure('UA-XXXXX-XX', { uid: 'XXXX.XXXX' })
 ```
 
-#### `measurement.set(Record<string, string>)`
+#### `measurement.set(params: Record<string, string>)`
 
 Set measurement parameter, returns a new measurement instance.
 
@@ -129,6 +131,25 @@ measure('UA-XXXXX-XX').exception(error.message).send()
 ```
 ```js
 measure('UA-XXXXX-XX').exception(error.message, false).send()
+```
+
+### `batchSend(measurements: Measurement[]) => void`
+
+Send multiple hits in a single request.
+
+> Batch requests have the following additional limitations:
+>
+> - A maximum of 20 hits can be specified per request.
+> - The total size of all hit payloads cannot be greater than 16K bytes.
+> - No single hit payload can be greater than 8K bytes.
+
+```js
+const { measure, batchSend } = require('measurement-protocol')
+
+batchSend([
+  measure('UA-XXXXX-XX').pageview('/docs'),
+  measure('UA-XXXXX-XX').event('load', '/index.js')
+])
 ```
 
 ## License
