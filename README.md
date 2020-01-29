@@ -37,7 +37,7 @@ For all available parameters, checkout [Measurement Protocol Parameter Reference
 
 ### Helpers
 
-Built on top of that, there's some human-friendly helpers:
+Built on top of that, there's human-friendly helpers for common usage:
 
 ```js
 measure(trackId).pageview(...params).send()
