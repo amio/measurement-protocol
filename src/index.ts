@@ -92,18 +92,26 @@ class Measure {
     return new Measure({ ...this.params, ...params })
   }
 
-  setCustomDimension (values: string[]): Measure {
+  setCustomDimensions (values: string[]): Measure {
+    if (values.length > 200) {
+      throw new Error('There is a maximum of 200 custom dimensions (20 for free accounts)')
+    }
+
     const params = {}
     values.forEach((val, idx) => {
-      params[`cd${idx}`] = val
+      params[`cd${++idx}`] = val
     })
     return this.set(params)
   }
 
   setCustomMetrics (values: number[]): Measure {
+    if (values.length > 200) {
+      throw new Error('There is a maximum of 200 custom metrics (20 for free accounts)')
+    }
+
     const params = {}
     values.forEach((val, idx) => {
-      params[`cm${idx}`] = val
+      params[`cm${++idx}`] = val
     })
     return this.set(params)
   }
