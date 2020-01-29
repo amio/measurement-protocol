@@ -2,7 +2,6 @@
 
 [![npm version][npm-src]][npm-href]
 [![Bundle size][bundlephobia-src]][bundlephobia-href]
-[![License][license-src]][license-href]
 
 A minimal module for Google's [Universal Analytics][ua-href] tracking via the [Measurement Protocol][mp-href], in human friendly manner.
 
@@ -131,6 +130,11 @@ measure('UA-XXXXX-XX').exception(error.message).send()
 ```js
 measure('UA-XXXXX-XX').exception(error.message, false).send()
 ```
+
+## License
+
+[![License][license-src]][license-href]
+
 
 [npm-src]: https://badgen.net/npm/v/measurement-protocol
 [npm-href]: https://www.npmjs.com/package/measurement-protocol
