@@ -154,13 +154,13 @@ class Measure {
 
 function buildPayload (params: Partial<MeasurementParams>): string {
   const formated: Record<string, string> = {}
+
   Object.keys(params).forEach(key => {
     if (params[key] === undefined) return
     formated[key] = params[key]
   })
 
-  // Create a random User ID if no cid & uid presented
-  if (formated.uid === undefined && formated.cid === undefined) {
+  if (formated.cid === undefined) {
     formated.cid = uuid()
   }
 
