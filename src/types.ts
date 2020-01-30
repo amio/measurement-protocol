@@ -73,3 +73,7 @@ export interface MeasurementParams {
   /** Is Exception Fatal? */
   exf?: Bool;
 }
+
+export interface MeasurementConfig {
+  server?: string;
+}

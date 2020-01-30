@@ -1,4 +1,4 @@
-import { measure, send } from '../src/index'
+import { measure } from '../src/index'
 
 const trackId = 'UA-1234567-12'
 

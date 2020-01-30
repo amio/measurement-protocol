@@ -1,28 +1,36 @@
 import uuid from 'uuid/v4'
 
-import { MeasurementParams } from './types'
+import { MeasurementParams, MeasurementConfig } from './types'
 
 export function measure (
   tid: MeasurementParams['tid'],
-  params: Partial<MeasurementParams> = {},
+  params: MeasurementParams = {},
+  config: MeasurementConfig = {},
 ): Measure {
-  return new Measure({ tid, ...params })
+  return new Measure({ tid, ...params }, config)
 }
 
 class Measure {
   params: MeasurementParams;
+  config: MeasurementConfig = {
+    server: 'https://www.google-analytics.com'
+  };
 
-  constructor (params: MeasurementParams = {}) {
+  constructor (params: MeasurementParams = {}, config: MeasurementConfig = {}) {
     this.params = { v: '1', ...params }
+    this.config = { ...this.config, ...config }
   }
 
-  set (this: Measure, params: MeasurementParams): Measure {
-    return new Measure({ ...this.params, ...params })
+  set (this: Measure, params: MeasurementParams, config: MeasurementConfig = {}): Measure {
+    return new Measure(
+      { ...this.params, ...params },
+      { ...this.config, ...config }
+    )
   }
 
   setCustomDimensions (values: string[]): Measure {
     if (values.length > 200) {
-      throw new Error('There is a maximum of 200 custom dimensions (20 for free accounts)')
+      throw new Error('There is a maximum of 200 custom dimensions for Analytics 360 accounts (20 for standard accounts)')
     }
 
     const params = {}
@@ -34,7 +42,7 @@ class Measure {
 
   setCustomMetrics (values: number[]): Measure {
     if (values.length > 200) {
-      throw new Error('There is a maximum of 200 custom metrics (20 for free accounts)')
+      throw new Error('There is a maximum of 200 custom metrics for Analytics 360 accounts (20 for standard accounts)')
     }
 
     const params = {}
@@ -105,12 +113,22 @@ function buildPayload (params: Partial<MeasurementParams>): string {
 
 export async function send (measurement: Measure): Promise<Response> {
   const body = buildPayload(measurement.params)
-  return post('https://www.google-analytics.com/collect', body)
+  return post(`${measurement.config.server}/collect`, body)
 }
 
 export async function batchSend (measurements: Measure[]): Promise<Response> {
+  if (measurements.length = 0) {
+    throw new Error('Expect one measurement at minimum')
+  }
+
+  const server = measurements[0].config.server
+
+  if (!measurements.every(m => m.config.server === server)) {
+    throw new Error('Expect all measurements have same `server` config')
+  }
+
   const body = measurements.map(m => buildPayload(m.params)).join('\n')
-  return post('https://www.google-analytics.com/batch', body)
+  return post(`${server}/batch`, body)
 }
 
 async function post (url: string, body: string): Promise<Response> {
