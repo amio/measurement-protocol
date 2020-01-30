@@ -52,7 +52,7 @@ class Measure {
     return this.set(params)
   }
 
-  send (this: Measure): void { send(this) }
+  send (this: Measure): Promise<Response | IncomingMessage> { return send(this) }
 
   toString (this: Measure): string { return buildPayload(this.params) }
 
@@ -111,12 +111,12 @@ function buildPayload (params: Partial<MeasurementParams>): string {
   return new URLSearchParams(formated).toString()
 }
 
-export async function send (measurement: Measure): Promise<Response> {
+export async function send (measurement: Measure): Promise<Response | IncomingMessage> {
   const body = buildPayload(measurement.params)
   return post(`${measurement.config.server}/collect`, body)
 }
 
-export async function batchSend (measurements: Measure[]): Promise<Response> {
+export async function batchSend (measurements: Measure[]): Promise<Response | IncomingMessage> {
   if (measurements.length = 0) {
     throw new Error('Expect one measurement at minimum')
   }
@@ -131,7 +131,9 @@ export async function batchSend (measurements: Measure[]): Promise<Response> {
   return post(`${server}/batch`, body)
 }
 
-async function post (url: string, body: string): Promise<Response> {
+import { IncomingMessage } from 'http'
+
+async function post (url: string, body: string): Promise<Response | IncomingMessage> {
   if (typeof fetch === 'function') {
     // post in browser
     return fetch(url, { method: 'POST', body })

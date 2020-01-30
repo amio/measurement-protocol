@@ -1,4 +1,5 @@
 import { measure } from '../src/index'
+import { IncomingMessage } from 'http'
 
 const trackId = 'UA-1234567-12'
 
@@ -145,3 +146,29 @@ test('.exception()', () => {
     exf: '0'
   })
 })
+
+test('.send()', (done) => {
+  measure(trackId, {}, { server: 'https://www.google-analytics.com/debug' }).pageview('/').send()
+    .then(resp => {
+      responseJSON(resp as IncomingMessage).then(data => {
+        expect(data.hitParsingResult.length).toBe(1)
+        expect(data.hitParsingResult.every(h => h.valid)).toBe(true)
+        done()
+      })
+    }, done)
+})
+
+async function responseJSON (response: IncomingMessage): Promise<any> {
+  return new Promise((resolve, reject) => {
+    try {
+      let body = ''
+      response.on('data', trunk => body += trunk)
+      response.on('error', reject)
+      response.on('end', () => {
+        resolve(JSON.parse(body))
+      })
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
