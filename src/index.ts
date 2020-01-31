@@ -67,6 +67,45 @@ class Measure {
     return this.set(params)
   }
 
+  screenview (this: Measure, screenName: string): Measure {
+    return this.set({
+      t: 'screenview',
+      cd: screenName,
+    })
+  }
+
+  transaction (this: Measure, id: string, affiliation?: string, revenue = 0, shipping = 0, tax = 0): Measure {
+    return this.set({
+      t: 'transaction',
+      ti: id,
+      ta: affiliation,
+      tr: revenue,
+      ts: shipping,
+      tt: tax,
+    })
+  }
+
+  item (this: Measure, id: string, name: string, price = 0, quantity = 0, code: string, category: string): Measure {
+    return this.set({
+      t: 'item',
+      ti: id,
+      in: name,
+      ip: price,
+      iq: quantity,
+      ic: code,
+      iv: category,
+    })
+  }
+
+  social (this: Measure, name: string, action: string, actionTarget: string): Measure {
+    return this.set({
+      t: 'social',
+      sn: name,
+      sa: action,
+      st: actionTarget,
+    })
+  }
+
   event (this: Measure, category: string, action: string, label?: string, value?: number): Measure {
     return this.set({
       t: 'event',

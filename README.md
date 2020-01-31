@@ -41,10 +41,10 @@ Built on top of that, there's human-friendly helpers for common usage:
 
 ```js
 measure(trackId).pageview(...params).send()
-measure(trackId).screenview(...params).send()   // not implemented yet
-measure(trackId).transaction(...params).send()  // not implemented yet
-measure(trackId).social(...params).send()       // not implemented yet
-measure(trackId).item(...params).send()         // not implemented yet
+measure(trackId).screenview(...params).send()
+measure(trackId).transaction(...params).send()
+measure(trackId).social(...params).send()
+measure(trackId).item(...params).send()
 measure(trackId).event(...params).send()
 measure(trackId).timing(...params).send()
 measure(trackId).exception(...params).send()
@@ -59,8 +59,6 @@ measure(trackId).set({ t: 'pageview', dh: 'example.com', dp: '/docs' }).send()
 
 ## API
 
-> All measurement methods are chainable (returns a new Measurement instance), except `.send()`.
-
 ### `measure(trackId: string, params?: Record<string, string>)`
 
 Create a measurement instance.
@@ -73,6 +71,8 @@ const tracker = measure('UA-XXXXX-XX')
 // Create a measurement with params
 const tracker = measure('UA-XXXXX-XX', { uid: 'XXXX.XXXX' })
 ```
+
+> All measurement methods are chainable (returns a new Measurement instance), except `.send()`.
 
 #### `measurement.set(params: Record<string, string>)`
 
@@ -98,6 +98,47 @@ measure('UA-XXXXX-XX').pageview('https://example.com/about').send()
 ```
 ```js
 measure('UA-XXXXX-XX').pageview({ host: 'example.com', path: '/about' }).send()
+```
+
+#### `measurement.screenview(screenName: string)`
+
+Screens represent content users are viewing within an app. The equivalent concept for a website is pages. Measuring screen views allows you to see which content is being viewed most by your users, and how are they are navigating between different pieces of content.
+
+```js
+measure('UA-XXXXX-XX').screenview('High Scores').send()
+```
+
+Other params can be used with screenview measurement:
+
+- `an` Application Name (`'My App'`)
+- `av` Application version (`1.2.0`)
+- `aid` Application ID (`com.company.app`)
+- `aiid` Application Installer ID (`com.platform.vending`)
+
+```js
+measure('UA-XXXXX-XX').set({ an: 'My App', av: '1.2.0' }).screenview('High Scores').send()
+```
+
+#### `measurement.transaction(id: string, affiliation?: string, revenue = 0, shipping = 0, tax = 0)`
+
+```js
+measure('UA-XXXXX-XX').transaction('OD564', 'Member', 15.47, 3.50, 11.20).send()
+```
+
+#### `measurement.item(id: string, name: string, price = 0, quantity = 0, code: string, category: string)`
+
+```js
+measure('UA-XXXXX-XX').item('0D564', 'Shoe', 3.50, 4, 'SKU47', 'Blue').send()
+```
+
+#### `measurement.social(name: string, action: string, actionTarget: string)`
+
+You can use social interaction analytics to measure the number of times users click on social buttons embedded in webpages. For example, you might measure a Facebook "Like" or a Twitter "Tweet".
+
+While event measurement can help you analyze general user-interactions very well, Social Analytics provides a consistent framework for recording social interactions. This in turn provides a consistent set of reports to compare social network interactions across multiple networks.
+
+```js
+measure('UA-XXXXX-XX').social('facebook', 'like', 'http://foo.com').send()
 ```
 
 #### `measurement.event(category: string, action: string, label?: string, value?: number)`
