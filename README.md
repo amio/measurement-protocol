@@ -59,7 +59,9 @@ measure(trackId).set({ t: 'pageview', dh: 'foo.com', dp: '/docs' }).send()
 
 ## API
 
-### `measure(trackId: string, params?: Record<string, string>) => Measurement`
+### `measure()`
+
+`measure(trackId: string, params?: Record<string, string>) => Measurement`
 
 Create a measurement instance.
 
@@ -89,7 +91,7 @@ const trackEvent = tracker.set({ t: 'event' })
 
 #### `.send()`
 
-`measurement.send() => Promise<Response>`
+`measurement.send() => Promise<Response | IncomingMessage>`
 
 Send measurement data to Google Analytics via Measurement Protocol.
 
@@ -202,7 +204,9 @@ measure('UA-XXXXX-XX').exception(error.message).send()
 measure('UA-XXXXX-XX').exception(error.message, false).send()
 ```
 
-### `batchSend(measurements: Measurement[]) => void`
+### `batchSend()`
+
+`batchSend(measurements: Measurement[]) => Promise<Response | IncomingMessage>`
 
 Send multiple hits (measurement) in a single request. Batch requests to Google Analytics have the following limitations:
 
