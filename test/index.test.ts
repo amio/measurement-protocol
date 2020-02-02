@@ -149,6 +149,19 @@ test('.item(id, name, price, quantity, code, category)', () => {
   })
 })
 
+test('.social(name, action, actionTarget)', () => {
+  const { params } = measure(trackId).social('facebook', 'like', '/docs')
+
+  expect(params).toEqual({
+    v: '1',
+    tid: trackId,
+    t: 'social',
+    sn: 'facebook',
+    sa: 'like',
+    st: '/docs'
+  })
+})
+
 test('.event(category, action, label, value)', () => {
   const { params } = measure(trackId).event('cat', 'action', 'label', 10)
 
