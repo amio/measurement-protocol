@@ -85,7 +85,7 @@ class Measure {
     })
   }
 
-  item (this: Measure, id: string, name: string, price = 0, quantity = 0, code: string, category: string): Measure {
+  item (this: Measure, id: string, name: string, price = 0, quantity = 0, code?: string, category?: string): Measure {
     return this.set({
       t: 'item',
       ti: id,
@@ -156,7 +156,7 @@ export async function send (measurement: Measure): Promise<Response | IncomingMe
 }
 
 export async function batchSend (measurements: Measure[]): Promise<Response | IncomingMessage> {
-  if (measurements.length = 0) {
+  if (measurements.length === 0) {
     throw new Error('Expect one measurement at minimum')
   }
 

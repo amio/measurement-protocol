@@ -1,4 +1,4 @@
-import { measure } from '../src/index'
+import { measure, batchSend } from '../src/index'
 import { IncomingMessage } from 'http'
 
 const trackId = 'UA-1234567-12'
@@ -107,7 +107,49 @@ test('.pageview({ host, path })', () => {
   })
 })
 
-test('.event()', () => {
+test('.screenview(screenName)', () => {
+  const { params } = measure(trackId).screenview('High Scores')
+
+  expect(params).toEqual({
+    v: '1',
+    tid: trackId,
+    t: 'screenview',
+    cd: 'High Scores'
+  })
+})
+
+test('.transaction(id, affiliation, revenue, shipping, tax)', () => {
+  const { params } = measure(trackId).transaction('0D564', 'Member', 15.47, 3.50, 11.20)
+
+  expect(params).toEqual({
+    v: '1',
+    tid: trackId,
+    t: 'transaction',
+    ta: 'Member',
+    ti: '0D564',
+    tr: 15.47,
+    ts: 3.5,
+    tt: 11.2
+  })
+})
+
+test('.item(id, name, price, quantity, code, category)', () => {
+  const { params } = measure(trackId).item('0D564', 'Shoe', 3.50, 4, 'SKU47', 'Blue')
+
+  expect(params).toEqual({
+    v: '1',
+    tid: trackId,
+    t: 'item',
+    ti: '0D564',
+    in: 'Shoe',
+    ip: 3.5,
+    iq: 4,
+    ic: 'SKU47',
+    iv: 'Blue'
+  })
+})
+
+test('.event(category, action, label, value)', () => {
   const { params } = measure(trackId).event('cat', 'action', 'label', 10)
 
   expect(params).toEqual({
@@ -121,7 +163,7 @@ test('.event()', () => {
   })
 })
 
-test('.timing()', () => {
+test('.timing(category, name, value, label)', () => {
   const { params } = measure(trackId).timing('cat', 'name', 10, 'label')
 
   expect(params).toEqual({
@@ -135,7 +177,7 @@ test('.timing()', () => {
   })
 })
 
-test('.exception()', () => {
+test('.exception(description, fatal)', () => {
   const { params } = measure(trackId).exception('desc', false)
 
   expect(params).toEqual({
@@ -150,7 +192,7 @@ test('.exception()', () => {
 test('.send()', (done) => {
   measure(trackId, {}, { server: 'https://www.google-analytics.com/debug' }).pageview('/').send()
     .then(resp => {
-      responseJSON(resp as IncomingMessage).then(data => {
+      jsonParseResponse(resp as IncomingMessage).then(data => {
         expect(data.hitParsingResult.length).toBe(1)
         expect(data.hitParsingResult.every(h => h.valid)).toBe(true)
         done()
@@ -158,7 +200,7 @@ test('.send()', (done) => {
     }, done)
 })
 
-async function responseJSON (response: IncomingMessage): Promise<any> {
+async function jsonParseResponse (response: IncomingMessage): Promise<any> {
   return new Promise((resolve, reject) => {
     try {
       let body = ''
