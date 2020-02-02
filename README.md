@@ -3,7 +3,7 @@
 [![npm version][npm-src]][npm-href]
 [![Bundle size][bundlephobia-src]][bundlephobia-href]
 
-A minimal module for Google's [Universal Analytics][ua-href] tracking via the [Measurement Protocol][mp-href], in human friendly manner.
+A js module for Google's [Universal Analytics][ua-href] tracking via the [Measurement Protocol][mp-href], in human friendly manner.
 
 Works in node.js and browser.
 
@@ -31,7 +31,7 @@ measure(trackId)  // create a measurement instance
 ```
 
 - `trackId` Google Analytics Tracking ID / Web Property ID (`'UA-XXXXX-XX'`)
-- `params` Parameters for Measurement Protocol (`{ t: 'pageview', dh: 'example.com', dp: '/docs' }`)
+- `params` Parameters for Measurement Protocol (`{ t: 'pageview', dh: 'foo.com', dp: '/docs' }`)
 
 For all available parameters, checkout [Measurement Protocol Parameter Reference](https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters)
 
@@ -52,14 +52,14 @@ measure(trackId).exception(...params).send()
 
 ```js
 // a human fiendly manner
-measure(trackId).pageview({ host: 'example.com', path: '/docs' }).send()
+measure(trackId).pageview({ host: 'foo.com', path: '/docs' }).send()
 // equals to
-measure(trackId).set({ t: 'pageview', dh: 'example.com', dp: '/docs' }).send()
+measure(trackId).set({ t: 'pageview', dh: 'foo.com', dp: '/docs' }).send()
 ```
 
 ## API
 
-### `measure(trackId: string, params?: Record<string, string>)`
+### `measure(trackId: string, params?: Record<string, string>) => Measurement`
 
 Create a measurement instance.
 
@@ -74,7 +74,9 @@ const tracker = measure('UA-XXXXX-XX', { uid: 'XXXX.XXXX' })
 
 > All measurement methods are chainable (returns a new Measurement instance), except `.send()`.
 
-#### `measurement.set(params: Record<string, string>)`
+#### `.set()`
+
+`measurement.set(params: Record<string, string>)`
 
 Set measurement parameter, returns a new measurement instance.
 
@@ -85,22 +87,28 @@ const trackPageview = tracker.set({ t: 'pageview' })
 const trackEvent = tracker.set({ t: 'event' })
 ```
 
-#### `measurement.send() => Promise<Response>`
+#### `.send()`
+
+`measurement.send() => Promise<Response>`
 
 Send measurement data to Google Analytics via Measurement Protocol.
 
-#### `measurement.pageview(url: string | { host: string, path: string })`
+#### `.pageview()`
+
+`measurement.pageview(url: string | { host: string, path: string })`
 
 Page view measurement allows you to measure the number of views you had for a particular page on your website. Pages often correspond to an entire HTML document, but they can also represent dynamically loaded content; this is known as "virtual pageviews".
 
 ```js
-measure('UA-XXXXX-XX').pageview('https://example.com/about').send()
+measure('UA-XXXXX-XX').pageview('https://foo.com/about').send()
 ```
 ```js
-measure('UA-XXXXX-XX').pageview({ host: 'example.com', path: '/about' }).send()
+measure('UA-XXXXX-XX').pageview({ host: 'foo.com', path: '/about' }).send()
 ```
 
-#### `measurement.screenview(screenName: string)`
+#### `.screenview()`
+
+`measurement.screenview(screenName: string)`
 
 Screens represent content users are viewing within an app. The equivalent concept for a website is pages. Measuring screen views allows you to see which content is being viewed most by your users, and how are they are navigating between different pieces of content.
 
@@ -119,19 +127,33 @@ Other params can be used with screenview measurement:
 measure('UA-XXXXX-XX').set({ an: 'My App', av: '1.2.0' }).screenview('High Scores').send()
 ```
 
-#### `measurement.transaction(id: string, affiliation?: string, revenue = 0, shipping = 0, tax = 0)`
+#### `.transaction()`
+
+`measurement.transaction(id: string, affiliation?: string, revenue = 0, shipping = 0, tax = 0)`
+
+```js
+measure('UA-XXXXX-XX').transaction('OD564').send()
+```
 
 ```js
 measure('UA-XXXXX-XX').transaction('OD564', 'Member', 15.47, 3.50, 11.20).send()
 ```
 
-#### `measurement.item(id: string, name: string, price = 0, quantity = 0, code: string, category: string)`
+#### `.item()`
+
+`measurement.item(id: string, name: string, price = 0, quantity = 0, code?: string, category?: string)`
+
+```js
+measure('UA-XXXXX-XX').item('0D564', 'Shoe').send()
+```
 
 ```js
 measure('UA-XXXXX-XX').item('0D564', 'Shoe', 3.50, 4, 'SKU47', 'Blue').send()
 ```
 
-#### `measurement.social(name: string, action: string, actionTarget: string)`
+#### `.social()`
+
+`measurement.social(name: string, action: string, actionTarget: string)`
 
 You can use social interaction analytics to measure the number of times users click on social buttons embedded in webpages. For example, you might measure a Facebook "Like" or a Twitter "Tweet".
 
@@ -141,7 +163,9 @@ While event measurement can help you analyze general user-interactions very well
 measure('UA-XXXXX-XX').social('facebook', 'like', 'http://foo.com').send()
 ```
 
-#### `measurement.event(category: string, action: string, label?: string, value?: number)`
+#### `.event()`
+
+`measurement.event(category: string, action: string, label?: string, value?: number)`
 
 Events are user interactions with content that can be measured independently from a web page or a screen load. Downloads, mobile ad clicks, gadgets, Flash elements, AJAX embedded elements, and video plays are all examples of actions you might want to measure as Events.
 
@@ -152,7 +176,9 @@ measure('UA-XXXXX-XX').event('error', '404').send()
 measure('UA-XXXXX-XX').event('error', '404', '/not-found').send()
 ```
 
-#### `measurement.timing(category: string, name: string, value: number, label?: string)`
+#### `.timing()`
+
+`measurement.timing(category: string, name: string, value: number, label?: string)`
 
 User timings allow developers to measure periods of time. This is particularly useful for developers to measure the latency, or time spent, making AJAX requests and loading web resources.
 
@@ -163,7 +189,9 @@ measure('UA-XXXXX-XX').timing('deps', 'load', 3200).send()
 measure('UA-XXXXX-XX').timing('deps', 'load', 3200, 'css').send()
 ```
 
-#### `measurement.exception(description: string, fatal?: boolean = true)`
+#### `.exception()`
+
+`measurement.exception(description: string, fatal?: boolean = true)`
 
 Exception tracking allows you to measure the number and type of crashes or errors that occur on your property.
 
@@ -176,13 +204,11 @@ measure('UA-XXXXX-XX').exception(error.message, false).send()
 
 ### `batchSend(measurements: Measurement[]) => void`
 
-Send multiple hits in a single request.
+Send multiple hits (measurement) in a single request. Batch requests to Google Analytics have the following limitations:
 
-> Batch requests have the following additional limitations:
->
-> - A maximum of 20 hits can be specified per request.
-> - The total size of all hit payloads cannot be greater than 16K bytes.
-> - No single hit payload can be greater than 8K bytes.
+- A maximum of 20 hits can be specified per request.
+- The total size of all hit payloads cannot be greater than 16K bytes.
+- No single hit payload can be greater than 8K bytes.
 
 ```js
 const { measure, batchSend } = require('measurement-protocol')
