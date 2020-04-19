@@ -1,6 +1,6 @@
 {
   "name": "measurement-protocol",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Measurement protocol for human",
   "repository": "amio/measurement-protocol",
   "main": "dist/index.js",
