@@ -1,4 +1,4 @@
-import uuid from 'uuid/v4'
+import uuid from '@lukeed/uuid'
 
 import { MeasurementParams, MeasurementConfig } from './types'
 

@@ -37,7 +37,7 @@ export interface MeasurementParams {
    *
    * Example usage: v=1
    */
-  v?: Text;
+  v?: '1';
 
   /**
    * Measurement ID/ Web Property ID
