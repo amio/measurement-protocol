@@ -2,10 +2,13 @@
 
 [![npm version][npm-src]][npm-href]
 [![Bundle size][bundlephobia-src]][bundlephobia-href]
+[![Types][types-src]][types-href]
 
 A js module for Google's [Universal Analytics][ua-href] tracking via the [Measurement Protocol][mp-href], in human friendly manner.
 
-Works in node.js and browser.
+- Works universal (node.js / browser)
+- Complete type annotations
+- Minimal footprint
 
 ## Usage
 
@@ -232,6 +235,8 @@ batchSend([
 [npm-href]: https://www.npmjs.com/package/measurement-protocol
 [bundlephobia-src]: https://badgen.net/bundlephobia/minzip/measurement-protocol
 [bundlephobia-href]: https://bundlephobia.com/result?p=measurement-protocol
+[types-src]: https://badgen.net/npm/types/measurement-protocol
+[types-href]: https://unpkg.com/browse/measurement-protocol/dist/types.d.ts
 [license-src]: https://badgen.net/badge/license/MIT
 [license-href]: LICENSE.md
 
