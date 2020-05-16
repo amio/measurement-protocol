@@ -23,9 +23,9 @@ const { measure } = require('measurement-protocol')
 measure('UA-XXXXX-XX').pageview('/docs').send()
 ```
 
-### Core Functions
+### Core API
 
-To send measurement data to Google Analytics, all you need is:
+To send measurement data, all you need is:
 
 ```js
 measure(trackId)  // create a measurement instance
@@ -33,14 +33,14 @@ measure(trackId)  // create a measurement instance
   .send()         // send it
 ```
 
-- `trackId` Google Analytics Tracking ID / Web Property ID (`'UA-XXXXX-XX'`)
-- `params` Parameters for Measurement Protocol (`{ t: 'pageview', dh: 'foo.com', dp: '/docs' }`)
+- `trackId` Google Analytics Tracking ID / Web Property ID `'UA-XXXXX-XX'`
+- `params` Parameters for Measurement Protocol `{ t: 'pageview', dh: 'foo.com', dp: '/docs' }`
 
 For all available parameters, checkout [Measurement Protocol Parameter Reference](https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters)
 
 ### Helpers
 
-Built on top of that, there's human-friendly helpers for common usage:
+Built on top of core api, there's human-friendly helpers for common usage:
 
 ```js
 measure(trackId).pageview(...params).send()
@@ -211,7 +211,7 @@ measure('UA-XXXXX-XX').exception(error.message, false).send()
 
 `batchSend(measurements: Measurement[]) => Promise<Response | IncomingMessage>`
 
-Send multiple hits (measurement) in a single request. Batch requests to Google Analytics have the following limitations:
+Send multiple measurements in a single request. Batch requests to Google Analytics have the following limitations:
 
 - A maximum of 20 hits can be specified per request.
 - The total size of all hit payloads cannot be greater than 16K bytes.
